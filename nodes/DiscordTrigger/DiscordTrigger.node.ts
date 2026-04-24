@@ -105,13 +105,25 @@ export class DiscordTrigger implements INodeType {
                 if( this.getNode().id === nodeId) {
                     console.log("received messageCreate event", message.id);
 
+										const nickname =
+											message?.member?.nickname ??
+											message?.member?.nick ?? // fallback depending on how it's serialized
+											null;
+
+										const displayName =
+											nickname ??
+											author?.username ??
+											null;
+									
                     const messageCreateOptions : any = {
                         id: message.id,
                         content: message.content,
                         guildId: guild?.id,
                         channelId: message.channelId,
                         authorId: author.id,
-                        authorName: author.username,
+                        authorName: displayName, 
+												authorUsername: author.username, 
+												authorNickname: nickname,
                         timestamp: message.createdTimestamp,
                         listenValue: this.getNodeParameter('value', ''),
                         authorIsBot: author.bot || author.system,
